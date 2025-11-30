@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { VisitsService } from './visits.service';
-import { CreateVisitDto } from './dto/create-visit.dto';
+import { VisitsService } from './visits.service.js';
+import { CreateVisitDto } from './dto/create-visit.dto.js';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Визиты')

@@ -8,8 +8,8 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { PatientsService } from './patients.service';
-import { CreatePatientDto } from './dto/create-patient.dto';
+import { PatientsService } from './patients.service.js';
+import { CreatePatientDto } from './dto/create-patient.dto.js';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 

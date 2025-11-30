@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { TreatmentService } from './treatment.service';
-import { CreateTreatmentDto } from './dto/create-treatment.dto';
+import { TreatmentService } from './treatment.service.js';
+import { CreateTreatmentDto } from './dto/create-treatment.dto.js';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Планы лечения')

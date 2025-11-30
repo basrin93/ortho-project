@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PatientsController } from './patients.controller';
-import { PatientsService } from './patients.service';
-import { FilesModule } from '../files/files.module';
+import { PatientsController } from './patients.controller.js';
+import { PatientsService } from './patients.service.js';
+import { FilesModule } from '../files/files.module.js';
 
 @Module({
   imports: [FilesModule],

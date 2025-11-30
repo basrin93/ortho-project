@@ -5,6 +5,7 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
+import sharp from 'sharp';
 
 @Injectable()
 export class FilesService {
@@ -24,22 +25,32 @@ export class FilesService {
   }
 
   async uploadFile(file: Express.Multer.File): Promise<string> {
+    if (!file.mimetype.includes('image')) {
+      // Здесь можно добавить обработку для других типов файлов (PDF и т.д.)
+    }
+
     const originalName = Buffer.from(file.originalname, 'latin1').toString(
       'utf8',
     );
-    const uniqueFileName = `${uuidv4()}-${originalName}`;
+    const nameWithoutExt = originalName.split('.').slice(0, -1).join('.');
+    const uniqueFileName = `${uuidv4()}-${nameWithoutExt}.webp`;
+
+    const buffer = await sharp(file.buffer)
+      .resize({ width: 800, withoutEnlargement: true })
+      .webp({ quality: 70 })
+      .toBuffer();
 
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.bucketName,
         Key: uniqueFileName,
-        Body: file.buffer,
-        ContentType: file.mimetype,
+        Body: buffer,
+        ContentType: 'image/webp',
         ACL: 'public-read',
       }),
     );
 
-    return uniqueFileName;
+    return `${process.env.S3_ENDPOINT}/${this.bucketName}/${uniqueFileName}`;
   }
 
   async deleteFile(key: string) {

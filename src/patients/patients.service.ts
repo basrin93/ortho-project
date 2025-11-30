@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
-import { CreatePatientDto } from './dto/create-patient.dto';
-import { FilesService } from '../files/files.service';
+import { PrismaService } from '../prisma.service.js';
+import { CreatePatientDto } from './dto/create-patient.dto.js';
+import { FilesService } from '../files/files.service.js';
 
 @Injectable()
 export class PatientsService {
@@ -15,6 +15,7 @@ export class PatientsService {
       include: {
         plans: true,
         visits: true,
+        photos: true,
       },
     });
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service'; // Шаг назад из папки visits
-import { CreateVisitDto } from './dto/create-visit.dto';
+import { PrismaService } from '../prisma.service.js';
+import { CreateVisitDto } from './dto/create-visit.dto.js';
 
 @Injectable()
 export class VisitsService {
