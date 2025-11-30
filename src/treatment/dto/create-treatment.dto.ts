@@ -8,28 +8,22 @@ import {
 } from 'class-validator';
 
 export class CreateTreatmentDto {
-  @ApiProperty({
-    description: 'ID of the patient',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
+  @ApiProperty({ description: 'ID пациента', example: 'ff79a0ae-...' })
   @IsString()
   @IsUUID()
   patientId: string;
 
-  @ApiProperty({
-    description: 'Диагноз пациента',
-    example: 'Дистальный прикус',
-  })
+  @ApiProperty({ description: 'Диагноз', example: 'Дистальный прикус' })
   @IsString()
   diagnosis: string;
 
   @ApiProperty({ description: 'Тип аппарата', example: 'Herbst' })
   @IsString()
-  applianceType: string;
+  apparatusType: string;
 
   @ApiProperty({
-    description: 'Дата начала (необязательно)',
-    example: '2024-01-15',
+    description: 'Дата начала',
+    example: '2025-11-25',
     required: false,
   })
   @IsOptional()
@@ -37,7 +31,7 @@ export class CreateTreatmentDto {
   startDate?: string;
 
   @ApiProperty({
-    description: 'Активен ли курс лечения',
+    description: 'Активен ли план?',
     example: true,
     required: false,
   })

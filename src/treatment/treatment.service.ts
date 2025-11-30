@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { CreateTreatmentDto } from './dto/create-treatment.dto';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class TreatmentService {
       data: {
         patientId: dto.patientId,
         diagnosis: dto.diagnosis,
-        apparatusType: dto.applianceType,
+        apparatusType: dto.apparatusType,
         startDate: dto.startDate ? new Date(dto.startDate) : undefined,
         isActive: dto.isActive,
       },

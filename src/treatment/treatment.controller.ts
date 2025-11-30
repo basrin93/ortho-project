@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { TreatmentService } from '../treatment/treatment.service';
+import { TreatmentService } from './treatment.service';
 import { CreateTreatmentDto } from './dto/create-treatment.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
@@ -9,13 +9,13 @@ export class TreatmentController {
   constructor(private readonly treatmentService: TreatmentService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Создать новой плана лечения' })
+  @ApiOperation({ summary: 'Создать новый план лечения' })
   create(@Body() dto: CreateTreatmentDto) {
     return this.treatmentService.create(dto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Получить все планы лечения' })
+  @ApiOperation({ summary: 'Получить все планы' })
   findAll() {
     return this.treatmentService.findAll();
   }
