@@ -10,8 +10,9 @@ export class PatientsService {
     private filesService: FilesService,
   ) {}
 
-  async findAll() {
+  async findAll(userId: string) {
     return await this.prisma.patient.findMany({
+      where: { userId },
       include: {
         plans: true,
         visits: true,
@@ -20,14 +21,14 @@ export class PatientsService {
     });
   }
 
-  async create(data: CreatePatientDto) {
+  async create(data: CreatePatientDto, userId: string) {
     return await this.prisma.patient.create({
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
         birthDate: new Date(data.birthDate),
-        userId: data.userId,
+        userId: userId,
       },
     });
   }

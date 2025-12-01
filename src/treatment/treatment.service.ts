@@ -18,7 +18,16 @@ export class TreatmentService {
     });
   }
 
-  async findAll() {
-    return await this.prisma.treatmentPlan.findMany();
+  async findAll(userId: string) {
+    return await this.prisma.treatmentPlan.findMany({
+      where: {
+        patient: {
+          userId,
+        },
+      },
+      include: {
+        patient: true,
+      },
+    });
   }
 }

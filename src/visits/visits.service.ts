@@ -16,8 +16,13 @@ export class VisitsService {
     });
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     return await this.prisma.visit.findMany({
+      where: {
+        patient: {
+          userId,
+        },
+      },
       include: {
         patient: true,
       },

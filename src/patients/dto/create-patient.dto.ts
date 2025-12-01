@@ -31,12 +31,4 @@ export class CreatePatientDto {
   })
   @IsDateString()
   birthDate: string;
-
-  @ApiProperty({
-    description: 'ID врача (User), к которому привязан пациент',
-    example: 'b35c4087-480e-4851-b98e-20855dfb54e8',
-  })
-  @IsString()
-  @IsUUID()
-  userId: string;
 }
