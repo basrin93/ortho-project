@@ -11,7 +11,15 @@ import {
 import { PatientsService } from './patients.service.js';
 import { CreatePatientDto } from './dto/create-patient.dto.js';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Пациенты')
 @Controller('patients')
@@ -34,6 +42,9 @@ export class PatientsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Удалить пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
     return this.patientsService.remove(id);
   }
