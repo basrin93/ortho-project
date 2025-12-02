@@ -2,7 +2,9 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
+  Param,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -37,5 +39,13 @@ export class VisitsController {
   @UseGuards(AuthGuard('jwt'))
   findAll(@Request() req: RequestWithUser) {
     return this.visitsService.findAll(req.user.userId);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Обновить визит' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  update(@Param('id') id: string, @Body() dto: Partial<CreateVisitDto>) {
+    return this.visitsService.update(id, dto);
   }
 }

@@ -28,4 +28,21 @@ export class VisitsService {
       },
     });
   }
+
+  async update(id: string, dto: Partial<CreateVisitDto>) {
+    const updateData: any = {};
+    
+    if (dto.notes !== undefined) {
+      updateData.notes = dto.notes;
+    }
+    
+    if (dto.date !== undefined) {
+      updateData.date = dto.date ? new Date(dto.date) : undefined;
+    }
+    
+    return await this.prisma.visit.update({
+      where: { id },
+      data: updateData,
+    });
+  }
 }
