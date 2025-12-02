@@ -45,6 +45,7 @@ model TreatmentPlan {
   apparatusType String   // Тип аппарата (например, "Herbst")
   startDate     DateTime @default(now())
   isActive      Boolean  @default(true) // Лечение идет сейчас?
+  photos        Photo[]  // Фотографии плана лечения
 }
 
 // 5. Визиты
@@ -70,6 +71,8 @@ model Photo {
   createdAt DateTime @default(now())
   visitId   String?  // ID визита, если фото привязано к визиту
   visit     Visit?   @relation(fields: [visitId], references: [id])
+  treatmentPlanId String? // ID плана лечения, если фото привязано к плану
+  treatmentPlan TreatmentPlan? @relation(fields: [treatmentPlanId], references: [id])
 }
 
 // 7. Шаблоны фраз для визитов

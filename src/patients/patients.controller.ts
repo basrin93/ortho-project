@@ -96,4 +96,12 @@ export class PatientsController {
   ) {
     return this.patientsService.uploadPhoto(patientId, file, body.visitId, body.treatmentPlanId);
   }
+
+  @Delete('photos/:photoId')
+  @ApiOperation({ summary: 'Удалить фото пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async deletePhoto(@Param('photoId') photoId: string) {
+    return this.patientsService.deletePhoto(photoId);
+  }
 }

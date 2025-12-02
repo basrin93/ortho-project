@@ -61,7 +61,34 @@ export class PatientsService {
         s3Key: fileName,
         type: photoType,
         visitId: visitId || null,
+        treatmentPlanId: treatmentPlanId || null,
       },
+    });
+  }
+
+  async deletePhoto(photoId: string) {
+    // Получаем фото для удаления файла из S3
+    const photo = await this.prisma.photo.findUnique({
+      where: { id: photoId },
+    });
+
+    if (photo) {
+      // Извлекаем ключ файла из полного URL
+      // Формат: ${S3_ENDPOINT}/${BUCKET_NAME}/${fileName}
+      const urlParts = photo.s3Key.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      
+      // Удаляем файл из S3
+      try {
+        await this.filesService.deleteFile(fileName);
+      } catch (e) {
+        console.error('Ошибка удаления файла из S3:', e);
+      }
+    }
+
+    // Удаляем запись из БД
+    return await this.prisma.photo.delete({
+      where: { id: photoId },
     });
   }
 }
