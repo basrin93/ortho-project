@@ -104,4 +104,48 @@ export class PatientsController {
   async deletePhoto(@Param('photoId') photoId: string) {
     return this.patientsService.deletePhoto(photoId);
   }
+
+  @Post(':id/cbct')
+  @ApiOperation({ summary: 'Загрузить КЛКТ файл пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        notes: {
+          type: 'string',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadCBCTFile(
+    @Param('id') patientId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { notes?: string },
+  ) {
+    return this.patientsService.uploadCBCTFile(patientId, file, body.notes);
+  }
+
+  @Get(':id/cbct')
+  @ApiOperation({ summary: 'Получить все КЛКТ файлы пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async getCBCTFiles(@Param('id') patientId: string) {
+    return this.patientsService.getCBCTFiles(patientId);
+  }
+
+  @Delete('cbct/:cbctFileId')
+  @ApiOperation({ summary: 'Удалить КЛКТ файл пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async deleteCBCTFile(@Param('cbctFileId') cbctFileId: string) {
+    return this.patientsService.deleteCBCTFile(cbctFileId);
+  }
 }

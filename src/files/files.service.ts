@@ -53,6 +53,28 @@ export class FilesService {
     return `${process.env.S3_ENDPOINT}/${this.bucketName}/${uniqueFileName}`;
   }
 
+  async uploadCBCTFile(file: Express.Multer.File): Promise<string> {
+    const originalName = Buffer.from(file.originalname, 'latin1').toString(
+      'utf8',
+    );
+    const extension = originalName.split('.').pop() || 'dcm';
+    const nameWithoutExt = originalName.split('.').slice(0, -1).join('.');
+    const uniqueFileName = `cbct/${uuidv4()}-${nameWithoutExt}.${extension}`;
+
+    // Загружаем файл как есть, без обработки
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: uniqueFileName,
+        Body: file.buffer,
+        ContentType: file.mimetype || 'application/dicom',
+        ACL: 'public-read',
+      }),
+    );
+
+    return `${process.env.S3_ENDPOINT}/${this.bucketName}/${uniqueFileName}`;
+  }
+
   async deleteFile(key: string) {
     await this.s3Client.send(
       new DeleteObjectCommand({

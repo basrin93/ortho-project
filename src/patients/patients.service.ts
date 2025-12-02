@@ -17,6 +17,7 @@ export class PatientsService {
         plans: true,
         visits: true,
         photos: true,
+        cbctFiles: true,
       },
     });
   }
@@ -36,6 +37,10 @@ export class PatientsService {
   async findOne(id: string) {
     return await this.prisma.patient.findUnique({
       where: { id },
+      include: {
+        cbctFiles: true,
+        photos: true,
+      },
     });
   }
 
@@ -89,6 +94,57 @@ export class PatientsService {
     // Удаляем запись из БД
     return await this.prisma.photo.delete({
       where: { id: photoId },
+    });
+  }
+
+  async uploadCBCTFile(patientId: string, file: Express.Multer.File, notes?: string) {
+    const s3Key = await this.filesService.uploadCBCTFile(file);
+    
+    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    return await this.prisma.cBCTFile.create({
+      data: {
+        patientId: patientId,
+        fileName: originalName,
+        s3Key: s3Key,
+        fileSize: file.size,
+        notes: notes || null,
+      },
+    });
+  }
+
+  async getCBCTFiles(patientId: string) {
+    return await this.prisma.cBCTFile.findMany({
+      where: { patientId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async deleteCBCTFile(cbctFileId: string) {
+    // Получаем КЛКТ файл для удаления из S3
+    const cbctFile = await this.prisma.cBCTFile.findUnique({
+      where: { id: cbctFileId },
+    });
+
+    if (cbctFile) {
+      // Извлекаем ключ файла из полного URL
+      // Формат: ${S3_ENDPOINT}/${BUCKET_NAME}/cbct/...
+      const urlParts = cbctFile.s3Key.split('/');
+      const bucketIndex = urlParts.findIndex(part => part === process.env.S3_BUCKET_NAME);
+      const fileName = bucketIndex >= 0 
+        ? urlParts.slice(bucketIndex + 1).join('/')
+        : cbctFile.s3Key.replace(`${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}/`, '');
+      
+      // Удаляем файл из S3
+      try {
+        await this.filesService.deleteFile(fileName);
+      } catch (e) {
+        console.error('Ошибка удаления КЛКТ файла из S3:', e);
+      }
+    }
+
+    // Удаляем запись из БД
+    return await this.prisma.cBCTFile.delete({
+      where: { id: cbctFileId },
     });
   }
 }
