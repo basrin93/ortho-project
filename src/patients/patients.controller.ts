@@ -82,6 +82,9 @@ export class PatientsController {
         visitId: {
           type: 'string',
         },
+        treatmentPlanId: {
+          type: 'string',
+        },
       },
     },
   })
@@ -89,8 +92,8 @@ export class PatientsController {
   async uploadPhoto(
     @Param('id') patientId: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { visitId?: string },
+    @Body() body: { visitId?: string; treatmentPlanId?: string },
   ) {
-    return this.patientsService.uploadPhoto(patientId, file, body.visitId);
+    return this.patientsService.uploadPhoto(patientId, file, body.visitId, body.treatmentPlanId);
   }
 }

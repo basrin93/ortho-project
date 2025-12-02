@@ -45,17 +45,22 @@ export class PatientsService {
     });
   }
 
-  async uploadPhoto(patientId: string, file: Express.Multer.File, visitId?: string) {
+  async uploadPhoto(patientId: string, file: Express.Multer.File, visitId?: string, treatmentPlanId?: string) {
     const fileName = await this.filesService.uploadFile(file);
-    // Если передан visitId, сохраняем его в поле visitId
-    const photoType = visitId ? `visit:${visitId}` : 'Общее';
+    // Определяем тип фото
+    let photoType = 'Общее';
+    if (treatmentPlanId) {
+      photoType = `treatment-plan:${treatmentPlanId}`;
+    } else if (visitId) {
+      photoType = `visit:${visitId}`;
+    }
 
     return await this.prisma.photo.create({
       data: {
         patientId: patientId,
         s3Key: fileName,
         type: photoType,
-        visitId: visitId,
+        visitId: visitId || null,
       },
     });
   }
