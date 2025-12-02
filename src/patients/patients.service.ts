@@ -47,7 +47,7 @@ export class PatientsService {
 
   async uploadPhoto(patientId: string, file: Express.Multer.File, visitId?: string) {
     const fileName = await this.filesService.uploadFile(file);
-    // Если передан visitId, сохраняем его в поле type как "visit:{visitId}"
+    // Если передан visitId, сохраняем его в поле visitId
     const photoType = visitId ? `visit:${visitId}` : 'Общее';
 
     return await this.prisma.photo.create({
@@ -55,6 +55,7 @@ export class PatientsService {
         patientId: patientId,
         s3Key: fileName,
         type: photoType,
+        visitId: visitId,
       },
     });
   }
