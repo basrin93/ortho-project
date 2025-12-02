@@ -2,7 +2,9 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
+  Param,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -37,5 +39,13 @@ export class TreatmentController {
   @UseGuards(AuthGuard('jwt'))
   findAll(@Request() req: RequestWithUser) {
     return this.treatmentService.findAll(req.user.userId);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Обновить план лечения' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  update(@Param('id') id: string, @Body() dto: Partial<CreateTreatmentDto>) {
+    return this.treatmentService.update(id, dto);
   }
 }

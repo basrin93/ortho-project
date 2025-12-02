@@ -30,4 +30,29 @@ export class TreatmentService {
       },
     });
   }
+
+  async update(id: string, dto: Partial<CreateTreatmentDto>) {
+    const updateData: any = {};
+    
+    if (dto.diagnosis !== undefined) {
+      updateData.diagnosis = dto.diagnosis;
+    }
+    
+    if (dto.apparatusType !== undefined) {
+      updateData.apparatusType = dto.apparatusType;
+    }
+    
+    if (dto.startDate !== undefined) {
+      updateData.startDate = dto.startDate ? new Date(dto.startDate) : undefined;
+    }
+    
+    if (dto.isActive !== undefined) {
+      updateData.isActive = dto.isActive;
+    }
+    
+    return await this.prisma.treatmentPlan.update({
+      where: { id },
+      data: updateData,
+    });
+  }
 }
