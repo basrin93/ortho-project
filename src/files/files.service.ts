@@ -75,6 +75,28 @@ export class FilesService {
     return `${process.env.S3_ENDPOINT}/${this.bucketName}/${uniqueFileName}`;
   }
 
+  async uploadPresentationFile(file: Express.Multer.File): Promise<string> {
+    const originalName = Buffer.from(file.originalname, 'latin1').toString(
+      'utf8',
+    );
+    const extension = originalName.split('.').pop() || 'pdf';
+    const nameWithoutExt = originalName.split('.').slice(0, -1).join('.');
+    const uniqueFileName = `presentations/${uuidv4()}-${nameWithoutExt}.${extension}`;
+
+    // Загружаем PDF файл как есть, без обработки
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: uniqueFileName,
+        Body: file.buffer,
+        ContentType: file.mimetype || 'application/pdf',
+        ACL: 'public-read',
+      }),
+    );
+
+    return `${process.env.S3_ENDPOINT}/${this.bucketName}/${uniqueFileName}`;
+  }
+
   async deleteFile(key: string) {
     await this.s3Client.send(
       new DeleteObjectCommand({

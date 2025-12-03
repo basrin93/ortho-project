@@ -18,6 +18,7 @@ export class PatientsService {
         visits: true,
         photos: true,
         cbctFiles: true,
+        presentations: true,
       },
     });
   }
@@ -40,6 +41,7 @@ export class PatientsService {
       include: {
         cbctFiles: true,
         photos: true,
+        presentations: true,
       },
     });
   }
@@ -145,6 +147,56 @@ export class PatientsService {
     // Удаляем запись из БД
     return await this.prisma.cBCTFile.delete({
       where: { id: cbctFileId },
+    });
+  }
+
+  async uploadPresentation(patientId: string, file: Express.Multer.File, title?: string) {
+    const s3Key = await this.filesService.uploadPresentationFile(file);
+    
+    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    return await this.prisma.presentation.create({
+      data: {
+        patientId: patientId,
+        fileName: originalName,
+        s3Key: s3Key,
+        fileSize: file.size,
+        title: title || null,
+      },
+    });
+  }
+
+  async getPresentations(patientId: string) {
+    return await this.prisma.presentation.findMany({
+      where: { patientId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async deletePresentation(presentationId: string) {
+    // Получаем презентацию для удаления из S3
+    const presentation = await this.prisma.presentation.findUnique({
+      where: { id: presentationId },
+    });
+
+    if (presentation) {
+      // Извлекаем ключ файла из полного URL
+      const urlParts = presentation.s3Key.split('/');
+      const bucketIndex = urlParts.findIndex(part => part === process.env.S3_BUCKET_NAME);
+      const fileName = bucketIndex >= 0 
+        ? urlParts.slice(bucketIndex + 1).join('/')
+        : presentation.s3Key.replace(`${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}/`, '');
+      
+      // Удаляем файл из S3
+      try {
+        await this.filesService.deleteFile(fileName);
+      } catch (e) {
+        console.error('Ошибка удаления презентации из S3:', e);
+      }
+    }
+
+    // Удаляем запись из БД
+    return await this.prisma.presentation.delete({
+      where: { id: presentationId },
     });
   }
 }

@@ -30,10 +30,11 @@ model Patient {
   userId    String
 
   // Ссылки на другие данные пациента
-  plans     TreatmentPlan[] // Планы лечения
-  photos    Photo[]         // Фотографии
-  visits    Visit[]         // Посещения
-  cbctFiles CBCTFile[]      // КЛКТ файлы
+  plans         TreatmentPlan[] // Планы лечения
+  photos        Photo[]         // Фотографии
+  visits        Visit[]         // Посещения
+  cbctFiles     CBCTFile[]      // КЛКТ файлы
+  presentations Presentation[]  // Презентации
 }
 
 // 4. План лечения (например, аппарат Гербста)
@@ -96,4 +97,17 @@ model CBCTFile {
   fileSize  Int      // Размер файла в байтах
   createdAt DateTime @default(now())
   notes     String?  // Заметки о КЛКТ
+}
+
+// 9. Презентации (PDF файлы)
+model Presentation {
+  id        String   @id @default(uuid())
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  patientId String
+  
+  fileName  String   // Имя файла
+  s3Key     String   // Ссылка на файл в S3
+  fileSize  Int      // Размер файла в байтах
+  createdAt DateTime @default(now())
+  title     String?  // Название презентации
 }

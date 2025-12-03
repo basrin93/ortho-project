@@ -148,4 +148,48 @@ export class PatientsController {
   async deleteCBCTFile(@Param('cbctFileId') cbctFileId: string) {
     return this.patientsService.deleteCBCTFile(cbctFileId);
   }
+
+  @Post(':id/presentations')
+  @ApiOperation({ summary: 'Загрузить презентацию (PDF) пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        title: {
+          type: 'string',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPresentation(
+    @Param('id') patientId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { title?: string },
+  ) {
+    return this.patientsService.uploadPresentation(patientId, file, body.title);
+  }
+
+  @Get(':id/presentations')
+  @ApiOperation({ summary: 'Получить все презентации пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async getPresentations(@Param('id') patientId: string) {
+    return this.patientsService.getPresentations(patientId);
+  }
+
+  @Delete('presentations/:presentationId')
+  @ApiOperation({ summary: 'Удалить презентацию пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async deletePresentation(@Param('presentationId') presentationId: string) {
+    return this.patientsService.deletePresentation(presentationId);
+  }
 }
