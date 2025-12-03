@@ -46,6 +46,18 @@ export class PatientsService {
     });
   }
 
+  async update(id: string, data: CreatePatientDto) {
+    return await this.prisma.patient.update({
+      where: { id },
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        birthDate: new Date(data.birthDate),
+      },
+    });
+  }
+
   async remove(id: string) {
     return await this.prisma.patient.delete({
       where: { id },

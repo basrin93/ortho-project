@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Delete,
@@ -56,6 +57,14 @@ export class PatientsController {
   @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.patientsService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Обновить пациента' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  update(@Param('id') id: string, @Body() dto: CreatePatientDto) {
+    return this.patientsService.update(id, dto);
   }
 
   @Delete(':id')
