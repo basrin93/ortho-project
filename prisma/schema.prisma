@@ -24,6 +24,7 @@ model Patient {
   lastName  String   // Фамилия
   phone     String?  // Телефон 
   birthDate DateTime // Дата рождения
+  createdAt DateTime @default(now()) // Дата создания
   
   // Связь: Пациент привязан к конкретному врачу
   doctor    User     @relation(fields: [userId], references: [id])

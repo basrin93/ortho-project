@@ -20,6 +20,9 @@ export class PatientsService {
         cbctFiles: true,
         presentations: true,
       },
+      orderBy: {
+        createdAt: 'desc', // Сортируем по дате создания, новые сначала
+      },
     });
   }
 
