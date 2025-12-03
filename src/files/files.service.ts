@@ -36,8 +36,8 @@ export class FilesService {
     const uniqueFileName = `${uuidv4()}-${nameWithoutExt}.webp`;
 
     const buffer = await sharp(file.buffer)
-      .resize({ width: 800, withoutEnlargement: true })
-      .webp({ quality: 70 })
+      .resize({ width: 1920, withoutEnlargement: true })
+      .webp({ quality: 85 })
       .toBuffer();
 
     await this.s3Client.send(
